@@ -1,0 +1,13 @@
+ In this method, the load balancer maintains a record of the number of active connections for each server in the pool.
+
+Pro
+1. More Intelligent Routing: Unlike Round Robin, Least Connections takes into account the current server load (at least in terms of active connections),
+
+Better for Varying Request Complexity:
+
+Drawbacks
+
+Drawbacks
+Unaware of Task Complexity: While the Least Connections method considers the number of active connections, it doesn’t account for the computational complexity of the tasks each server is handling. A server could have fewer but more resource-intensive tasks, and yet still receive new requests.
+
+Higher Overhead: Maintaining a real-time count of active connections for each server incurs more computational overhead compared to simpler algorithms like Round Robin.

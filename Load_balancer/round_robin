@@ -1,0 +1,10 @@
+Using round robin here
+
+R ound Robin is one of the simplest algorithms used in load balancing. In this method, incoming requests are distributed in a circular order across all the available servers in a server poo
+
+Pro
+1. Simplicity: The Round Robin algorithm is straightforward to implement. This makes it a good choice for basic load distribution where sophisticated capabilities are not required.
+
+Con
+Drawbacks
+Unaware of Server Load: The Round Robin algorithm doesn’t take into account the current load on each server. If one server is slower or is already handling more requests, Round Robin will still send new requests to it, which can lead to performance issues.

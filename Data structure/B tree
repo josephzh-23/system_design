@@ -1,0 +1,17 @@
+
+Self-balacning tree:
+
+Tree will adjust to maintain the binary search tree,
+Better than traditional binary tree here,
+
+Charactersitc:
+1. Each node can have multi keys (or multiple values), very useful here,
+
+2. A non-leaf node with k children have k -1 keys here
+
+			[7, 16]
+	  /   		|
+[1, 2, 5, 6]  [9, 12]
+
+
+Note 1, 2, 5, 6 < 7 here

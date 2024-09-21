@@ -1,0 +1,18 @@
+/ Reserve
+1. no two people should be able to resver the same spot at the same time)
+
+2. When you make a request to any node, you receive the exact same response (even if it’s an error) so that from the outside,
+
+Solution:
+	1. Replicating data across multiple nodes, using synchronous is better, using async means (eventual consistency)
+
+
+	2. 2 phase commit
+
+
+
+
+
+
+
+	This process separates from single-node transactions by implementing two phases: prepare and commit. A transaction manager ensures that all nodes are either committed or aborted.

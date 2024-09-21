@@ -1,0 +1,8 @@
+NoSQL databases are designed considering scalability in mind as compared to SQL data. In No-SQL, the scalability is done automatically which is invisible to the user.
+2.
+
+ is done on SQL databases, the No-SQL database already has shards that correspond to different indices.
+ The key difference between both of them is that the No-SQL has equal shards as compared to master-slave architecture. The shards are also known as nodes.
+
+
+ 

@@ -1,0 +1,23 @@
+Weighted Round Robin or Weighted Least Connections
+Both Weighted Round Robin and Weighted Least Connections are extensions of the basic Round Robin and Least Connections algorithms, respectively. In these weighted methods, each server is assigned a weight based on its capacity or some other criteria. Servers with higher weights will receive a proportionally larger number of requests.
+
+Trade-offs
+Better Resource Utilization:
+
+These weighted methods allow for more intelligent distribution of requests, especially in a heterogeneous environment where servers have different capacities.
+
+Adaptability: Both methods can be more adaptable to real-world scenarios where all servers are not equally capable or where different types of requests consume different amounts of resources.
+
+Fairness and Priority: The weight assignment can also be used to prioritize certain servers over others, providing more control over the traffic distribution.
+Scalability: These weighted methods can be more effective as you scale your environment. When you add a new, more powerful server, you can simply assign it a higher weight instead of reconfiguring the entire system.
+Hybrid Scenarios: Weighted methods can be useful in hybrid or cloud scenarios where you might have a mix of on-premises and cloud servers with varying capabilities.
+Drawbacks
+
+
+Complexity: The added layer of weights increases the complexity of managing and configuring the load balancer.
+
+Manual Tuning: Deciding the appropriate weights for each server often requires manual tuning and a deep understanding of the workload characteristics and server capabilities.
+
+Resource Monitoring: For Weighted Least Connections, the load balancer has to not only keep track of active connections but also needs to consider the weights in real-time, increasing the computational overhead.
+
+Inefficiency in Weight Allocation: If weights are not set properly, it can lead to inefficient use of resources. For example, assigning a too-high weight to a low-capacity server can overwhelm it.

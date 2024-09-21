@@ -1,0 +1,17 @@
+
+REMEMBER TO OPEN THE LINK FILE IN THIS FOLDER WHICH HAS A WEBPAGE 
+
+
+Cache Hit: Occurs when the requested data is found in the cache, allowing for faster data retrieval.
+
+Cache Miss: This happens when the requested data is not in the cache, necessitating fetching the data from its primary storage location.
+
+
+There r 3 types of you need to be concerned about
+
+1. Cache invalidation policies
+2. Cache eviction policies
+
+3. Caching strategies
+
+Check out the article in hand

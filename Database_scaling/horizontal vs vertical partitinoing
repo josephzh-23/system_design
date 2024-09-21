@@ -1,0 +1,9 @@
+https://blog.bytebytego.com/p/vertical-partitioning-vs-horizontal
+
+
+These 2 above really makes sense  here
+🔹 Vertical partitioning: it means some columns are moved to new tables. Each table contains the same number of
+ rows but fewer columns (see diagram below).
+
+🔹 Horizontal partitioning (often called sharding): it divides a table into multiple smaller tables.
+Each table is a separate data store, and it contains the same number of columns, but fewer rows (see diagram below).

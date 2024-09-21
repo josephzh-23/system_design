@@ -1,0 +1,35 @@
+
+
+Why is nosql harder to scale than sql?
+
+1.	Horizontal Scaling - The real advantage of NoSQL is horizontal scaling, aka sharding. Considering NoSQL 'documents' are sort of a 'self-contained' object, objects can be on different servers without worrying about joining rows from multiple servers, as is the case with the relational model.
+
+With shard scaling here
+Let's say we want to return an object like this:
+post {
+    id: 1
+    title: 'My post'
+    content: 'The content'
+    comments: {
+      comment: {
+        id: 1
+      }
+      comment: {
+        id: 2
+      }
+      ...
+
+    views: {
+      view: {
+        user: 1
+      }
+      view: {
+        user: 2
+      }
+      ...
+    }
+}
+In NoSQL, that object would basically be stored as is, and therefore can reside on a single server as a sort of self-contained object, without any need to join with data from other tables that could reside on other DB servers.
+However, with Relational DBs, the post would need to join with comments from the comments table, as well as views from the views table.
+
+This wouldn't be a problem in SQL ~UNTIL~ the DB is broken into shards, in which case 'comment 1' could be on one DB server, while 'comment 2' yet on another DB server. This makes it much more difficult to create the very same object in a RDBMS that has been scaled horizontally than in a NoSQL DB.

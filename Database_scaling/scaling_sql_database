@@ -1,0 +1,16 @@
+Sharding of Database:
+
+Database sharding is a key component for scaling both SQL and Non-SQL databases. According to the name, the database is sliced up into multiple pieces which are also called shards.
+
+Each of the shards has a unique index that corresponds to the type of data that is to be stored. Check the example section to understand this concept.
+
+
+2. How to decide which node to store data in?
+1. A cluster proxy is needed in the middle
+
+It acts as a load blalancer so it knows which
+
+2. The slave architecture is used here in sql, master (write) and in the database wouldb read here
+
+
+3. Problem with master and slave architecture

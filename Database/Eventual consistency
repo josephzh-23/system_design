@@ -1,0 +1,5 @@
+How Eventual Consistency Works:
+
+ 	  Imagine a group of friends sharing a story. Each friend hears the story from someone else and then passes it along to the next friend. Over time, everyone in the group hears the same version of the story, even though the story was initially told differently. Similarly, in a distributed system, eventual consistency ensures that all nodes will eventually have the same view of the data, even though they might see different values at different times.
+
+Eventually they will have the same

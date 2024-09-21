@@ -1,0 +1,40 @@
+When do we use this?
+
+When we have both CustomerMicroserviceand the OrderMicroservice, which have separate databases. Here is a customer order example with microservices:
+
+Now imagine
+	When a Put Order request comes from the user, both microservices will be called to apply changes into their own database. Because the transaction is now across multiple databases, it is now considered a distributed transaction.
+
+How to make sure fail or die together:
+	2 phase commits here
+
+	A prepare phase and a commit phase. In the prepare phase, all microservices will be asked to prepare for some data change that could be done atomically. Once all microservices are prepared, the commit phase will ask all the microservices to make the actual changes.
+
+	It checks with each service to make sure it will run and there is no issue,
+
+Disadvantage
+1. 2 pc is blocking s
+2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	Normally, there needs to be a global coordinator to maintain the lifecycle of the transaction, and the coordinator will need to call the microservices in the prepare and commit phases.
+
+
+
+
+When each microservice has different database, then we need this
+We have now decided to scale our database, to cater to increasing customers.
+ Data is distributed across multiple database servers. So, user A and user B’s database records may fall in different shards.

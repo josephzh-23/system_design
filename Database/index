@@ -1,0 +1,9 @@
+What's index here
+
+
+    Indexing is a data structure technique that allows you to quickly retrieve records from a database file. An Index is a small table having only two columns.
+
+
+      The first column comprises a copy of the primary or candidate key of a table. Its second column contains a set of pointers for holding the address of the disk block where that specific key-value stored.
+
+	- improve the performance of search query here

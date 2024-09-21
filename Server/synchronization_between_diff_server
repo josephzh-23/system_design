@@ -1,0 +1,14 @@
+
+
+What does it mean? When updating a data, EU server and US servers should both get the ++ in the c value here
+1.	So when you have multi copies of data
+
+
+	You can make a node server your leader, then rest will then be follower, and then using the 2 phase commit
+to write the transaction
+
+	When leader gets a update, you send a prepare request to your followers, your followers give you an acknowledgement that, Hey, yes, I got the prepare request. And when you get these acknowledgements, you ask your followers to commit a transaction here.
+
+
+		What if the commit msg fails in one of the slaves?
+	1.	We willl retry and then while the request is going through, we will block all get operations, so the availability is low but consistency is high here.

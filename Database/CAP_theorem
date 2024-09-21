@@ -1,0 +1,16 @@
+What is CAP theorem?
+
+
+CAP(Consistency-Availability-Partition Tolerance) theorem says that a distributed system cannot
+guarantee C, A and P simultaneously. It can at max provide any 2 of the 3 guarantees.
+Let us understand this with the help of a distributed database system.
+
+•	Consistency:  all queries should retrieve the same result for a highly consistent database 
+
+In a parking garage system, this means that
+no two people should be able to resver the same spot at the same time)
+
+
+•	Availability: The databases cannot have downtime and should be available and responsive always.
+
+•	Partition Tolerance: The database system should be functioning despite the communication becoming unstable.

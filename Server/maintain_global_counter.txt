@@ -1,0 +1,18 @@
+
+How will you maintain a global counter in distributed system? (This is used in url shortener)
+
+Centralized Counter:
+
+     This is the simplest approach where you maintain the counter on a single machine (or a small number of
+machines for redundancy). Every time a new URL needs to be shortened, the service contacts this machine to get the next counter value. The disadvantage is that this machine can become a bottleneck if the request rate is high, and it also represents a single point of failure.
+
+Distributed Counter with Locks:
+
+      In this approach, the counter is distributed across multiple machines and a lock is used to ensure that only one machine can increment the counter at a time. This can help increase availability and reduce the risk of a single point of failure, but it can also introduce latency due to the need for acquiring and releasing locks.
+
+Sharded Counters:
+
+      You could shard the counter across multiple machines. Each shard manages a portion of the counter. For
+ example, if you have two shards, the first shard could manage odd numbers and the second shard could manage even numbers. This can help increase throughput, but it also increases complexity.
+
+Using Distributed Data Stores: You can use distributed data stores that provide atomic counters like ZooKeeper, etcd or a distributed database like Google’s Spanner. These systems provide primitives to handle distributed counters with consistency.

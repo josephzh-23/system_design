@@ -1,0 +1,21 @@
+
+The following si used somewhere else 
+interface AccountNavigation {
+
+    /**
+     * If [title] is null, the toolbar title will not be set/changed.
+     */
+    data class ViewState(
+        val title: String?,
+        val backIconDrawable: Drawable? = null,
+        val popToTagOnBackPressed: String? = null,
+    )
+
+    fun configureToolbar(viewState: ViewState)
+    fun navigateToPage(accountPage: AccountPage)
+    fun navigateToOrderDetails(
+        orderNumber: OrderId,
+        packageNumber: Int = NO_PACKAGE_NUMBER,
+        showXAsBackIcon: Boolean = false,
+    )
+}

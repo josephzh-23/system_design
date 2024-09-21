@@ -1,0 +1,21 @@
+Concurrency issues
+	When multiple transactions execute concurrently in an uncontrolled or unrestricted manner, then it might lead to several problems. These problems are commonly referred to as concurrency problems in a database environment.
+
+1. Solutino 1 using locking
+
+	Locking involves acquiring locks on the data items used by transactions, preventing other transactions from accessing the same data until the lock is released.
+
+
+2. Optimistic locking
+
+		This method allows any update of a record to happen only when the value of that record has not changed after its last read.
+
+		Optimistic Locking checks if the current value of the record is the same as it was when previously read then the update is not allowed, and the read-modify-write cycle has to be repeated. Optimistic Locking is also called Conditional Update or Compare-And-Update.
+
+		- Use this where conflicts are low
+
+3.Pessimistic Locking
+
+		After locking the object read-modify-write operations are performed on the objects and then the object is released. During these operations, if another transaction tries to read the same object it has to wait until the read-modify-write cycle of the first transaction is completed.
+
+		- Use this when conflicts are high, used in banking systems here

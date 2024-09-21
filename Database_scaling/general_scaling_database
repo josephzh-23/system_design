@@ -1,0 +1,16 @@
+
+
+Ways to scale
+
+Option 1. Replication
+
+Replication refers to creating copies of a database or database node. Replication adds fault tolerance to a system. Each node in a cluster contains a copy of the data. If one of the nodes goes down, the cluster is still able to serve client requests because the other nodes in the cluster can respond to the requests.
+
+requests can be spread across all the nodes in the cluster instead of overwhelming a single node. This increases the capacity of the system to handle more database read requests.
+
+
+
+Option 2: Partition (aka sharding )
+Partitioning distributes data across multiple nodes in a cluster
+
+2. Sharding: the other type

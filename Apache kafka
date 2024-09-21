@@ -1,0 +1,9 @@
+1. Used for kafka low latency here and then
+
+Event streaming platform
+
+1. Producer ->  (exchanges ) <- consumer
+
+2. Use cases : message queue here very efficient here
+
+Uber and netiflix use this for real time user analytics and services, data warehousing. A real databus to talk to diff services here 

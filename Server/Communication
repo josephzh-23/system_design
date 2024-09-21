@@ -1,0 +1,9 @@
+
+
+1.	In synchronous replication, the leader node waits for all of the follower nodes to acknowledge receipt of the data change before reporting success to the client.
+
+2.	Can be slow as said for the user so not so good in that regard
+
+Aysnc transaciton
+1.	In async situation, the leader node does not wait for the follower nodes to acknowledge receipt of the data change before reporting success to the client.
+This means that the follower nodes may not have the most up-to-date copy of the data, and

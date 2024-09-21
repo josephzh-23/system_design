@@ -1,0 +1,12 @@
+Sql
+
+1. Master vs slave archi
+
+
+No-sql:
+
+0. Nosql much easier to scale horizontally
+
+1. Shards/nodes are equal:The key difference between both of them is that the No-SQL has equal shards as compared to master-slave architecture.
+
+2.Actually Mongodb is fully acid-compliant

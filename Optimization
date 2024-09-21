@@ -1,0 +1,14 @@
+
+How to reduce latency
+
+1. Caching
+Strategically cache frequently accessed data closer to users or processing points
+
+
+2. Load balancing
+Distribute network traffic across a pool of servers to equally distribute demand among multiple servers
+
+
+3. Provide high performing CPUs and low-latency network cards here
+
+4. Database indexing writing efficient sql queries here

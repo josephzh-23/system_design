@@ -1,0 +1,404 @@
+import { expect, Page, test as baseTest } from '@playwright/test'
+import HomePage from 'playwright-analytics/pages/home-pages/home-page'
+
+import { BrainTreeAPI } from '~/api/braintree'
+import ClientPage from '~/components/clients/client-page'
+import ClientsPage from '~/components/clients/clients-page'
+import BillingAddressPage from '~/components/kiosk/billing-address-page'
+import KioskPage from '~/components/kiosk/kiosk-page'
+import MembershipPage from '~/components/kiosk/membership-page'
+import PaymentMethodPage from '~/components/kiosk/payment-method-page'
+import LoginPage from '~/components/login/login-page'
+import { Tags } from '~/constants/tags'
+import getSanityVariables from '~pw/resources/sanity-variables'
+
+const { BUSINESS_ID_OMNICHANNEL, BACKEND_ENV } = getSanityVariables()
+
+const client = {
+  firstName: 'Francis',
+  lastName: 'Test',
+  address: '123 Main street',
+  apartmentNumber: 123,
+  phoneNumber: '2066983633',
+  city: 'Seattle',
+  country: 'USA',
+  state: 'WA',
+  zipCode: '98103',
+  payment: {
+    cardHolderName: 'first last name',
+    cardNumber: '4242 4242 4242 4242',
+    invalidCardNumber: '4242 4242 4242 4242 42',
+    cvv: '123',
+    expirationMonth: '02',
+    expirationYear: '2029',
+    expirationDate: '02/29'
+  },
+  patientNames: ['Jat', 'Jat3', 'Dawg', 'Jat', 'Jat2', 'Joseph', 'NoWellnessPlan Cat', 'NoWellnessPlan Frog'],
+}
+
+const { URL, AUTOTEST_USER_EMAIL_ROCKY, BUSINESS_NAME_OMNICHANNEL } = getSanityVariables()
+const autotestPassword = process.env.AUTOTEST_USER_PWD as string
+
+
+const clientWithoutBillingAddress = {
+  firstName: 'Joseph',
+  lastName: 'Test',
+  phoneNumber: '2066  983634',
+  payment: {
+    cardHolderName: 'first last name',
+    cardNumber: '4242 4242 4242 4242',
+    cvv: '',
+  },
+  patientNames: ['Bobik'],
+}
+
+type TestFixture = {
+  billingAddressPage: BillingAddressPage
+  paymentMethodPage: PaymentMethodPage
+  membershipPage: MembershipPage
+}
+
+const test = baseTest.extend<TestFixture>({
+  membershipPage: async ({ page }, use) =>
+    await use(await proceedToMembershipPage(page)),
+  billingAddressPage: async ({ membershipPage }, use) =>
+    await use(membershipPage.billingAddressPage),
+  paymentMethodPage: async ({ membershipPage }, use) =>
+    await use(membershipPage.paymentMethodPage),
+})
+
+async function proceedToMembershipPage(page: Page) {
+  const kioskPage = new KioskPage(page)
+  await kioskPage.actions.navigate(BUSINESS_ID_OMNICHANNEL, BACKEND_ENV)
+  return new MembershipPage(page)
+}
+
+async function billingAddressShouldAutofill(
+  billingAddressPage: BillingAddressPage,
+) {
+  const { selectors } = billingAddressPage
+
+  await expect(selectors.getAddressField()).toHaveValue(client.address)
+  await expect(selectors.getAddressField()).toHaveValue(client.address)
+  await expect(selectors.getLastNameField()).toHaveValue(client.lastName)
+  await expect(selectors.getFirstNameField()).toHaveValue(client.firstName)
+  // await expect(selectors.getCountryField(client.country)).toBeVisible()
+  await expect(selectors.getCityField()).toHaveValue(client.city)
+  await expect(selectors.getStateField()).toBeVisible()
+  await expect(selectors.getZipCodeField()).toHaveValue(client.zipCode)
+}
+
+async function billingAddressFormsAreEditable(
+  billingAddressPage: BillingAddressPage,
+) {
+  const { selectors } = billingAddressPage
+
+  await expect(selectors.getFirstNameField()).toBeEditable()
+  await expect(billingAddressPage.selectors.getLastNameField()).toBeEditable()
+
+  await expect(selectors.getAddressField()).toBeEditable()
+  // await expect(selectors.getCountryField(client.country)).toBeEditable()
+
+  await expect(selectors.getCityField()).toBeEditable()
+  await expect(selectors.getStateField()).toBeEditable()
+}
+
+async function errorMessageShownWithIncompleteFields(
+  billingAddressPage: BillingAddressPage,
+) {
+  // Make a field empty here
+  await billingAddressPage.selectors.getAddressField().fill('')
+  await billingAddressPage.actions.clickConfirmButton()
+
+  // FIXME: error message is missing
+  // await expect(
+  //   billingAddressPage.selectors.addressFieldRequiredMsg(),
+  // ).toBeVisible()
+}
+
+async function proceedToPaymentPageAfterFillingFields(
+  billingAddressPage: BillingAddressPage,
+  paymentMethodPage: PaymentMethodPage,
+) {
+  await billingAddressPage.selectors.getAddressField().fill(client.address)
+  await billingAddressPage.actions.clickConfirmButton()
+
+  await paymentMethodPage.assertPageVisible()
+}
+
+async function paymentFieldsAndInformationArePresent(
+  paymentMethodPage: PaymentMethodPage,
+) {
+  const {
+    selectors: paymentMethodPageSelectors,
+    actions: paymentMethodPageActions,
+  } = paymentMethodPage
+  const cardholderNameField =
+    paymentMethodPageSelectors.getCardholderNameField()
+  const cardNumberField = paymentMethodPageSelectors.getCardNumberField()
+  const cvvField = paymentMethodPageSelectors.getCVVField()
+  const expirationDateField =
+    paymentMethodPageSelectors.getExpirationDateField()
+
+  // Data fields are present
+  await expect(paymentMethodPageSelectors.getTitle()).toBeVisible()
+  await expect(cardholderNameField).toBeVisible()
+  await expect(cardNumberField).toBeVisible()
+  await expect(cvvField).toBeVisible()
+  await expect(expirationDateField).toBeVisible()
+
+  // Fields are sourced from braintree
+  expect(cardholderNameField).toHaveAttribute('data-braintree-name')
+  expect(cardNumberField).toHaveAttribute('data-braintree-name')
+  expect(cvvField).toHaveAttribute('data-braintree-name')
+  expect(expirationDateField).toHaveAttribute('data-braintree-name')
+
+  // TODO: data entry format validations, can't do until kiosk master is updated
+  const invalidCardNumber = 'invalid card number'
+  const invalidCvv = 'foo'
+  const invalidDate = 'bar'
+
+  await paymentMethodPageActions.fillCardNumberField(invalidCardNumber)
+  await expect(
+    paymentMethodPageSelectors.getCardNumberField(),
+  ).not.toContainText(invalidCardNumber)
+
+  await paymentMethodPageActions.fillCVVField(invalidCvv)
+  await expect(paymentMethodPageSelectors.getCVVField()).not.toContainText(
+    invalidCvv,
+  )
+
+  await paymentMethodPageActions.fillCVVField(invalidCvv)
+  await expect(paymentMethodPageSelectors.getCVVField()).not.toContainText(
+    invalidCvv,
+  )
+
+  await paymentMethodPageActions.fillExpirationDateField(invalidDate)
+  await expect(
+    paymentMethodPageSelectors.getExpirationDateField(),
+  ).not.toContainText(invalidDate)
+  await paymentMethodPageActions.fillExpirationDateField('0125')
+  // Click anywhere else on the page
+  await paymentMethodPageSelectors.getTitle().click()
+  // Should auto-format with slash
+  await expect(paymentMethodPageSelectors.getExpirationDateField()).toHaveValue(
+    '01 / 25',
+  )
+
+  // Sign up button is shown
+  await expect(paymentMethodPageSelectors.getSignUpButton()).toBeVisible()
+
+  // Amount to be charged is shown
+  await expect(
+    paymentMethodPageSelectors.getCardChargeAmount(49.0),
+  ).toBeVisible()
+
+  // Auto-renewal date is shown
+  // await expect(
+  //   paymentMethodPageSelectors.getAutoRenewalMessage('09/10/2025'),
+  // ).toBeVisible()
+
+  // Test sign-up before fields are actually filled
+  // await paymentMethodPageActions.clickSignUpButton()
+  // TODO: assert error messages are present, can't do until kiosk master is updated
+
+  // Fill out some fields with invalid formatting
+  await paymentMethodPageActions.fillCardholderName(client.firstName)
+  await paymentMethodPageActions.fillCardNumberField('123456')
+  await paymentMethodPageActions.fillCVVField(client.payment.cvv)
+  await paymentMethodPageActions.fillExpirationDateField('12/28')
+  // TODO: assert error messages are present, can't do until kiosk master is updated
+
+  // Fill out payment fields
+  await paymentMethodPageActions.fillCardholderName(
+    `${client.firstName} ${client.lastName}`,
+  )
+  await paymentMethodPageActions.fillCardNumberField(client.payment.cardNumber)
+  await paymentMethodPageActions.fillCVVField(client.payment.cvv)
+  await paymentMethodPageActions.fillExpirationDateField('12/28')
+
+  // Sign-up button is enabled
+  await expect(paymentMethodPageSelectors.getSignUpButton()).toBeEnabled()
+
+}
+
+async function billingAddressShouldBeEmpty(
+  billingAddressPage: BillingAddressPage,
+) {
+  const { selectors } = billingAddressPage
+  const { firstName, lastName } = clientWithoutBillingAddress
+
+  await expect(selectors.getFirstNameField()).toHaveValue(firstName)
+  await expect(selectors.getLastNameField()).toHaveValue(lastName)
+
+  await expect(selectors.getAddressField()).toBeEmpty()
+  await expect(selectors.getApartmentNoField()).toBeVisible()
+
+  await expect(selectors.getCityField()).toBeEmpty()
+  await expect(selectors.getStateField()).toBeVisible()
+}
+
+test(
+  'Membership sign-up: happy path, client with billing address',
+  { tag: Tags.SANITY },
+  async ({ billingAddressPage, membershipPage, paymentMethodPage, request, page }) => {
+    const {
+      emailVerificationPage,
+      termsAndConditionsPage,
+      planSummaryPage,
+      signUpPage,
+      signUpSuccessPage
+    } = membershipPage
+
+    await proceedToEmailVerificationPage(membershipPage, true)
+    await membershipPage.actions.goToBillingAddressPage()
+
+    // TC-001
+    // await billingAddressShouldAutofill(billingAddressPage)
+
+    // TC-003
+    // await billingAddressFormsAreEditable(billingAddressPage)
+
+    // // TC-005 (do error validations first)
+    // await errorMessageShownWithIncompleteFields(billingAddressPage)
+
+    // // TC-004, TC-006
+    await proceedToPaymentPageAfterFillingFields(
+      billingAddressPage,
+      paymentMethodPage,
+    )
+
+    // // TC-007
+    await paymentFieldsAndInformationArePresent(paymentMethodPage)
+
+    // tc 35 Go back to billing address page
+    await membershipPage.actions.clickBackButton()
+    await billingAddressPage.assertPageVisible()
+
+    // tc 34 Go back to email verification page
+    await membershipPage.actions.clickBackButton()
+    await emailVerificationPage.assertPageVisible()
+
+    // tc 33 Go back to terms and condition page
+    await membershipPage.actions.clickBackButton()
+    await termsAndConditionsPage.assertPageVisible()
+
+    // tc 32 Go back to plan summary page
+    await membershipPage.actions.clickBackButton()
+    await planSummaryPage.assertPageVisible()
+
+    // tc 31 Return to Sign up page
+    await membershipPage.actions.clickBackButton()
+    await signUpPage.assertPageVisible()
+
+
+    const { actions: paymentMethodPageActions } = paymentMethodPage
+
+    await paymentMethodPageActions.fillCardholderName(
+      `${client.firstName} ${client.lastName}`,
+    )
+    await paymentMethodPageActions.fillCardNumberField(client.payment.cardNumber)
+    await paymentMethodPageActions.fillCVVField(client.payment.cvv)
+    await paymentMethodPageActions.fillExpirationDateField(client.payment.expirationDate)
+
+    const fn = async () => {
+      const braintreeResult = await paymentMethodPage.waitForContextResponse('https://payments.sandbox.braintree-api.com/graphql')
+      const response1 = await braintreeResult.json()
+      const apiGWResponse = await paymentMethodPage.waitForContextResponse('apigw-rhapsody/membership/signUp')
+      const response2 = await apiGWResponse.json()
+      return [response1, response2]
+    }
+
+    const [[res, isUserSignedup]] = await Promise.all([fn(), paymentMethodPage.actions.clickSignUpButton()])
+
+    const token = res?.data?.tokenizeCreditCard?.token
+    await expect(token).toBeDefined()
+    await expect(isUserSignedup).toBe(true)
+
+    // tc 20: will see the successful message here
+    await signUpSuccessPage.assertPageVisible()
+
+
+    // tc 21: ensure membership is active on portal-ui
+    await page.waitForTimeout(1500)
+
+    await page.goto(`${URL}`)
+
+
+    const homePage = new HomePage(page)
+
+    await homePage.header.switchToPractice(BUSINESS_NAME_OMNICHANNEL)
+    await page.waitForTimeout(3000)
+
+    const clientPage = new ClientsPage(page)
+    await clientPage.navigateToClients()
+
+    await page.mouse.wheel(0, 2000)
+
+
+    await page.getByText('Jat3 yr | MScheduleStandard').filter({hasText: 'standard'}).click()
+
+
+    await page.locator('div').filter({ hasText: /^Membership$/ }).click()
+
+    await expect(page.getByText('JatStandard | Version 3Plan09').filter({hasText: 'Cancel'})).toBeVisible()
+    await expect(page.getByText('JatStandard | Version 3Plan09').filter({hasText: 'Terms'})).toBeVisible()
+
+
+  },
+)
+
+
+
+test('Membership sign-up: billing address form empty when pet parent has no billing information', async ({
+  billingAddressPage,
+  membershipPage,
+}) => {
+  await proceedToEmailVerificationPage(membershipPage, false)
+  await membershipPage.actions.goToBillingAddressPage()
+
+  // TC-002
+  await billingAddressShouldBeEmpty(billingAddressPage)
+})
+
+async function proceedToEmailVerificationPage(
+  membershipPage: MembershipPage,
+  hasBillingAddress: boolean,
+) {
+
+
+  const user = hasBillingAddress ? client : clientWithoutBillingAddress
+  const {
+    browsePlansPage: {
+      actions: browsePlansPageActions,
+    } = membershipPage.browsePlansPage,
+    phonePage: { actions: phonePageActions } = membershipPage.phonePage,
+    signUpPage: { actions: signUpPageActions } = membershipPage.signUpPage,
+    planSummaryPage: {
+      actions: planSummaryPageActions,
+    } = membershipPage.planSummaryPage,
+    termsAndConditionsPage: {
+      actions: termsAndConditionsPageActions,
+    } = membershipPage.termsAndConditionsPage,
+  } = membershipPage
+
+  await browsePlansPageActions.clickContinueButton()
+  await phonePageActions.fillPhoneNumber(user.phoneNumber)
+  await phonePageActions.clickNextButton()
+  await signUpPageActions.chooseWellnessPlan(user.patientNames[0], 'Standard')
+
+
+
+
+  if (hasBillingAddress) {
+    for (let i = 0; i < client.patientNames.length; i++) {
+      await signUpPageActions.clickNextButton()
+    }
+  }
+  await signUpPageActions.scrollToBottomOfPlanSetupWindow()
+  await signUpPageActions.clickContinueButton()
+  await planSummaryPageActions.clickContinueButton()
+  await termsAndConditionsPageActions.scrollToBottomOfTermsAndConditionsWindow()
+  await termsAndConditionsPageActions.acceptTermsAndConditions()
+  await termsAndConditionsPageActions.clickContinueButton()
+}
