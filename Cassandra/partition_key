@@ -1,0 +1,10 @@
+Partition key:
+
+One or more columns that are used to determine what partition the row is in.
+
+We'll discuss partitioning of data later in this deep-dive.
+
+
+Clustering key:
+ Zero or more columns that are used to determine the sorted order of rows in a table.
+  Data ordering is important depending on one's data modeling needs, so Cassandra gives users control over this via the clustering keys.

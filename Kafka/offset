@@ -1,0 +1,4 @@
+In Apache Kafka, an "offset" is a unique identifier assigned to each
+
+
+message within a partition of a topic, representing its position within the partition's message log, essentially acting as a sequence number that indicates where a message sits within the order of messages in that partition; it allows consumers to track which messages they have processed and resume from the correct point if they fail or restart

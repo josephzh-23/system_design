@@ -1,0 +1,16 @@
+
+Why is partition so important?
+
+Topics are divided into several partitions,
+Each partition is an ordered, immutable sequence of messages, and it acts as a data shard within the topic.
+
+1. Partitions allow messages to be processed independently by multiple consumers while
+maintaining the order of messages with the same key.
+
+
+2.Each topic -> has many partitions
+
+3. One partition -> a single consumer here
+
+4. Partition count: The total number of partitions within a cluster should be < 200,000. It is also advised to
+ maintain up to 4,000 partitions per broker

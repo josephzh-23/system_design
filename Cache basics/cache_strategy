@@ -1,0 +1,20 @@
+https://shahriar.svbtle.com/Understanding-writethrough-writearound-and-writeback-caching-with-python
+
+Cache aside (most common one, aka lazy loading):
+
+How this works:
+1.When data is requested, the application first checks the cache. If the data is present, it's retrieved from the cache. If not, the application fetches it from the primary data source, updates the cache, and then returns the data.
+
+In this case, data could be stale so not so good
+
+
+Read/ Write through
+1. Write to both cache and storage at the same time
+2. The latency can be a bit high here 
+
+Higher write frequency but low read frequency here
+
+Write-around
+1. Data write to the store directly, with a cache miss
+
+The write-around policy is good for applications that don’t frequently re-read recently written data. This will result in lower write latency but higher read latency which is a acceptable trade-off for these scenarios.

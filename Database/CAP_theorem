@@ -5,7 +5,7 @@ CAP(Consistency-Availability-Partition Tolerance) theorem says that a distribute
 guarantee C, A and P simultaneously. It can at max provide any 2 of the 3 guarantees.
 Let us understand this with the help of a distributed database system.
 
-•	Consistency:  all queries should retrieve the same result for a highly consistent database 
+•	Consistency:  all queries should retrieve the same result for a highly consistent database
 
 In a parking garage system, this means that
 no two people should be able to resver the same spot at the same time)

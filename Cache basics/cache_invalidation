@@ -1,0 +1,5 @@
+1. Use time based caching very important here
+-
+Downside
+This may lead to the use of stale data if the expiration time is set too long.
+Unnecessary refreshes if the expiration time is set too short.

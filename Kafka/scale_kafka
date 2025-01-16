@@ -1,0 +1,18 @@
+https://www.scaler.com/topics/kafka-tutorial/scaling-kafka-cluster/
+
+The link above kind of explains it but can still see below here:
+
+1. Add more brokers to the cluster
+-   Install Kafka software on the new machines and ensure they can
+ communicate with the existing Kafka cluster and ZooKeeper ensemble.
+
+
+2.Reparitition existing topics:
+Use Kafka's partition reassignment tool to rebalance partition
+s across the new and existing brokers, ensuring an even distribution of partitions.
+
+3. Monitor the manage the cluster after scaling
+
+Regularly monitor the performance metrics of the Kafka cluster,
+such as throughput, latency, and resource utilization,
+using monitoring tools like Prometheus, Grafana, or other Kafka-specific monitoring solutions.

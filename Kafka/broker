@@ -1,0 +1,8 @@
+A broker
+
+A broker receives msg from producer, and then send to consumer
+
+
+1. A broker is the server that can contain the partitions as said
+
+2. A broker can have max 4000 kafka topics
